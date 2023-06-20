@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Card", "Saga.Card\Saga.Card.csproj", "{D9733A80-F4DC-461E-AAA4-3B5C1CB1DFD8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Events", "Saga.Events\Saga.Events.csproj", "{91A8B9EF-8E2F-4DE1-895A-A0A6F28C5C88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Orchestrator", "Saga.Orchestrator\Saga.Orchestrator.csproj", "{450328CC-719B-4DB4-9C81-1C4208612AA3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9733A80-F4DC-461E-AAA4-3B5C1CB1DFD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9733A80-F4DC-461E-AAA4-3B5C1CB1DFD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9733A80-F4DC-461E-AAA4-3B5C1CB1DFD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9733A80-F4DC-461E-AAA4-3B5C1CB1DFD8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91A8B9EF-8E2F-4DE1-895A-A0A6F28C5C88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91A8B9EF-8E2F-4DE1-895A-A0A6F28C5C88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91A8B9EF-8E2F-4DE1-895A-A0A6F28C5C88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91A8B9EF-8E2F-4DE1-895A-A0A6F28C5C88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
