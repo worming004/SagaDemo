@@ -21,7 +21,7 @@ public class CardController : ControllerBase
     public async Task<IActionResult> Post(Card card)
     {
       _logger.LogInformation("sending card");
-        await _client.PublishEventAsync("main", "orchestrator", Map(card));
+        await _client.PublishEventAsync("pubsub", "orchestratortopic", Map(card));
 
         return Ok();
     }

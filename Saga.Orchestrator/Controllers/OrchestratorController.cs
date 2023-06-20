@@ -6,7 +6,7 @@ using Saga.Events;
 namespace Saga.Orchestrator.Controllers;
 
 [ApiController]
-[Route("main")]
+[Route("[controller]")]
 public class OrchestratorController : ControllerBase
 {
     private DaprClient _client;
@@ -18,8 +18,8 @@ public class OrchestratorController : ControllerBase
     }
 
     [HttpPost]
-    [Topic("main", "orchestrator")]
-    public async Task<IActionResult> CardCompletedEventHandler(CardConfirmedEvent evt)
+    [Route("cardconfirmed")]
+    public async Task<IActionResult> CardConfirmedEventHandler(CardConfirmedEvent evt)
     {
         // await _client.PublishEventAsync("main", "orchestrator", Map(card));
         System.IO.File.WriteAllText("data.log", evt.ToString());

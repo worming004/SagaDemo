@@ -1,0 +1,10 @@
+apiVersion: dapr.io/v1alpha1
+kind: Subscription
+metadata:
+  name: localcardconfirmedsubscription
+spec:
+  topic: orchestratortopic
+  route: /Orchestrator/cardconfirmed
+  pubsubname: pubsub
+scopes:
+- orchestrator
