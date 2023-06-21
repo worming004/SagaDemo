@@ -2,6 +2,7 @@
 
 public class CardConfirmedEvent
 {
+    public Guid Id { get; set; }
     public List<Item> Items { get; set; } = new List<Item>();
 }
 

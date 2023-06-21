@@ -1,6 +1,7 @@
 using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 using Saga.Events;
+using Saga.Events.Common;
 
 namespace Saga.Card.Controllers;
 
@@ -18,15 +19,21 @@ public class CardController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Card card)
+    public async Task<IActionResult> Post(Card card, CancellationToken token)
     {
-      _logger.LogInformation("sending card");
-        await _client.PublishEventAsync("pubsub", "orchestratortopic", Map(card));
+        _logger.LogInformation("sending card");
+        var cardConfirmedEvent = NewCardConfirmedEvent(card);
+        if (cardConfirmedEvent.Items.Count == 0) {
+          return BadRequest("Request should have items");
+        }
+
+        await _client.SaveStateAsync(DefaultValues.Dapr.DefaultStateStore,  cardConfirmedEvent.Id.ToString(), cardConfirmedEvent, cancellationToken: token);
+        await _client.PublishEventAsync("pubsub", "orchestratortopic", cardConfirmedEvent);
 
         return Ok();
     }
 
-    private CardConfirmedEvent Map(Card card)
+    private CardConfirmedEvent NewCardConfirmedEvent(Card card)
     {
         return new CardConfirmedEvent
         {
@@ -34,14 +41,15 @@ public class CardController : ControllerBase
             {
                 Name = i.Name,
                 Price = i.Price
-            }).ToList()
+            }).ToList(),
+            Id = Guid.NewGuid()
         };
     }
 }
 
 public class Card
 {
-    public List<Item> Items { get; set; } = new List<Item>();
+    public List<Item> Items { get; set; }
 }
 
 public class Item
