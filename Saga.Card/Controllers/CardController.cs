@@ -19,15 +19,17 @@ public class CardController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(Card card, CancellationToken token)
+    public async Task<IActionResult> Post(NewCardConfirmedEventRequest card, CancellationToken token)
     {
         _logger.LogInformation("sending card");
-        var cardConfirmedEvent = NewCardConfirmedEvent(card);
-        if (cardConfirmedEvent.Items.Count == 0) {
-          return BadRequest("Request should have items");
+        var cardConfirmedEvent = NewCardConfirmedEvent(card.Card);
+        _logger.LogInformation(cardConfirmedEvent.ToString());
+        if (cardConfirmedEvent.Items.Count == 0)
+        {
+            return BadRequest("Request should have items");
         }
 
-        await _client.SaveStateAsync(DefaultValues.Dapr.DefaultStateStore,  cardConfirmedEvent.Id.ToString(), cardConfirmedEvent, cancellationToken: token);
+        await _client.SaveStateAsync(DefaultValues.Dapr.DefaultStateStore, cardConfirmedEvent.Id.ToString(), cardConfirmedEvent, cancellationToken: token);
         await _client.PublishEventAsync("pubsub", "orchestratortopic", cardConfirmedEvent);
 
         return Ok();
@@ -47,9 +49,14 @@ public class CardController : ControllerBase
     }
 }
 
+public class NewCardConfirmedEventRequest
+{
+    public Card Card { get; set; } = new Card();
+}
+
 public class Card
 {
-    public List<Item> Items { get; set; }
+    public List<Item> Items { get; set; } = new List<Item>();
 }
 
 public class Item
