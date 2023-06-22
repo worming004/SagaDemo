@@ -1,3 +1,5 @@
+using Saga.Orchestrator.Services.Orchestrator;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +13,8 @@ builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.AddConsole();
 });
+
+builder.Services.AddSingleton<OrderOrchestrator>();
 
 var app = builder.Build();
 
