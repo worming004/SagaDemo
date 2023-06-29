@@ -2,6 +2,7 @@ using Dapr;
 using Dapr.Client;
 using Microsoft.AspNetCore.Mvc;
 using Saga.Events;
+using Saga.Orchestrator.Services.Orchestrator;
 
 namespace Saga.Orchestrator.Controllers;
 
@@ -9,23 +10,22 @@ namespace Saga.Orchestrator.Controllers;
 [Route("[controller]")]
 public class OrchestratorController : ControllerBase
 {
-    private DaprClient _client;
+    private OrderOrchestrator _orchestrator;
     private ILogger<OrchestratorController> _logger;
 
-    public OrchestratorController(ILogger<OrchestratorController> logger)
+    public OrchestratorController(ILogger<OrchestratorController> logger, OrderOrchestrator orchestrator)
     {
         _logger = logger;
+        _orchestrator = orchestrator;
     }
 
     [HttpPost]
     [Route("cardconfirmed")]
     public async Task<IActionResult> CardConfirmedEventHandler(CardConfirmedEvent evt)
     {
-        // await _client.PublishEventAsync("main", "orchestrator", Map(card));
-        System.IO.File.WriteAllText("data.log", evt.ToString());
-       _logger.LogInformation("CardConfirmedEvent received") ;
+        _orchestrator.CardConfirmedEventHandler(evt);
 
-        return Ok();
+        return Accepted();
     }
 }
 

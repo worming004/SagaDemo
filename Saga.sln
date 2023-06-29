@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Events", "Saga.Events\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Orchestrator", "Saga.Orchestrator\Saga.Orchestrator.csproj", "{450328CC-719B-4DB4-9C81-1C4208612AA3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Saga.Inventory", "Saga.Inventory\Saga.Inventory.csproj", "{915932EA-1C6E-4B5C-BB35-F95B22F6B1D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{450328CC-719B-4DB4-9C81-1C4208612AA3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{915932EA-1C6E-4B5C-BB35-F95B22F6B1D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{915932EA-1C6E-4B5C-BB35-F95B22F6B1D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{915932EA-1C6E-4B5C-BB35-F95B22F6B1D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{915932EA-1C6E-4B5C-BB35-F95B22F6B1D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
