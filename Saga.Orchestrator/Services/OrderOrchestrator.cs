@@ -23,6 +23,6 @@ public class OrderOrchestrator
             Id = Guid.NewGuid(),
             Items = evt.Items,
         };
-        await _client.PublishEventAsync("pubsub", "orchestratortopic", orderRegistered);
+        await _client.PublishEventAsync("pubsub", "inventorytopic", orderRegistered);
     }
 }

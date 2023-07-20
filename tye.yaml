@@ -1,0 +1,23 @@
+name: dapr
+extensions:
+- name: dapr
+  components-path: components
+services:
+- name: card
+  project: Saga.Card/Saga.Card.csproj
+  bindings:
+      - port: 5000
+        name: port
+        protocol: http
+- name: inventory
+  project: Saga.Inventory/Saga.Inventory.csproj
+  bindings:
+      - port: 5002
+        name: port
+        protocol: http
+- name: orchestrator
+  project: Saga.Orchestrator/Saga.Orchestrator.csproj
+  bindings:
+      - port: 5001
+        name: port
+        protocol: http

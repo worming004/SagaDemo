@@ -12,6 +12,12 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddConsole();
 });
 
+builder.Services.AddHttpLogging(log =>
+{
+    log.RequestBodyLogLimit = 80000;
+    log.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestBody;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,6 +30,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseHttpLogging();
 
 app.MapControllers();
 

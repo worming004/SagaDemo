@@ -8,3 +8,16 @@ spec:
   pubsubname: pubsub
 scopes:
 - orchestrator
+
+---
+
+apiVersion: dapr.io/v1alpha1
+kind: Subscription
+metadata:
+  name: newcardsubscription
+spec:
+  topic: cardtopic
+  route: /Card
+  pubsubname: pubsub
+scopes:
+- card

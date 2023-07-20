@@ -17,6 +17,7 @@ public class InventoryController : ControllerBase
     public async Task<IActionResult> Post()
     {
         
+      return Ok();
     }
 }
 

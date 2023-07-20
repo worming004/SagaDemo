@@ -19,8 +19,9 @@ public class CardController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(NewCardConfirmedEventRequest card, CancellationToken token)
+    public async Task<IActionResult> Post(DaprData<NewCardConfirmedEventRequest> daprCard, CancellationToken token)
     {
+        var card = daprCard.Data;
         _logger.LogInformation("sending card");
         var cardConfirmedEvent = NewCardConfirmedEvent(card.Card);
         _logger.LogInformation(cardConfirmedEvent.ToString());

@@ -13,6 +13,11 @@ builder.Services.AddLogging(loggingBuilder =>
 {
     loggingBuilder.AddConsole();
 });
+builder.Services.AddHttpLogging(log =>
+{
+    log.RequestBodyLogLimit = 80000;
+    log.LoggingFields = Microsoft.AspNetCore.HttpLogging.HttpLoggingFields.RequestBody;
+});
 
 builder.Services.AddSingleton<OrderOrchestrator>();
 
@@ -28,6 +33,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseHttpLogging();
 
 app.MapSubscribeHandler();
 app.MapControllers();
