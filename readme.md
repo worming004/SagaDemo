@@ -2,14 +2,17 @@
 
 This project aim to show an orchestrated saga using dotnet and dapr.
 
+## Dependencies
+
+* Install project tye with [doc](https://github.com/dotnet/tye/blob/main/docs/getting_started.md)
+* Install dapr with [doc](https://docs.dapr.io/getting-started/install-dapr-cli/)
+* Install dotnet 6 with [doc](https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu)
+* Install docker or podman
+
 ## How to run
 
-There is few projects to run with dapr in order to get the full app to work. Each projects have a _run.sh_ file to execute in order to run the app locally as expected. Projects are
-
-* Saga.Card
-* Saga.Orchestrator
-
-Feel free to turn off and on again each project during a saga
+* Start dapr with command `dapr init` or `dapr init --container-runtime podman` if you prefer podman
+* Start tye with `tye run`
 
 ## How to start a saga
 

@@ -19,7 +19,6 @@ public class OrderOrchestrator
         _logger.LogInformation("CardConfirmedEvent received");
         var orderRegistered = new OrderRegisteredEvent
         {
-
             Id = Guid.NewGuid(),
             Items = evt.Items,
         };
