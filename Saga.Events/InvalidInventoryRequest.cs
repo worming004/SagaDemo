@@ -10,6 +10,6 @@ public class InvalidInventoryRequest
 
 public enum InvalidInventoryRequestType
 {
-    Duplicates,
+    InsufficientInventory,
     InventoryNotFound,
 }

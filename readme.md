@@ -20,3 +20,4 @@ The file _launch-saga.sh_ is here to start a saga. The project Saga.Card have to
 
 ## Simplicity
 
+None of these services are designed to be scallable. Expect deadlock if under pressure

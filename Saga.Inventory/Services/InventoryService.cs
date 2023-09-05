@@ -2,6 +2,7 @@ using Dapr.Client;
 using Saga.Events;
 using Saga.Events.Common;
 using Saga.Inventory.Commands;
+using Saga.Inventory.Exceptions;
 using Saga.Inventory.Models;
 
 namespace Saga.Inventory.Services;
@@ -32,48 +33,59 @@ public class InventoryService
 
     public async Task HandlerOrderRegistered(OrderRegisteredEvent evt)
     {
-        if (!await ValidateAndPublishError(evt))
-        {
-            return;
-        }
+        var groupedItems = evt.Items.GroupBy(t => t.Name);
 
-        var toAwait = evt.Items.Select(async it =>
+        var toAwait = groupedItems.Select<IGrouping<string, Item>, Task<(ItemInventory, IEnumerable<Item>)>>(async it =>
         {
-            var items = await _client.GetStateAsync<ItemInventory>(DefaultValues.Dapr.DefaultStateStore, it.Name);
-            if (items is null)
-            {
-                await _client.PublishEventAsync("pubsub", "invalidinventoryrequest", new Events.InvalidInventoryRequest
-                {
-                    OriginEventId = evt.Id,
-                    ItemName = it.Name,
-                    Message = $"Item with name {duplicates.First().Key} is duplicated in the request",
-                    InvalidType = InvalidInventoryRequestType.InventoryNotFound
-                });
-            }
+            // TODO use GetBulkStateAsync
+            var items = await _client.GetStateAsync<ItemInventory>(DefaultValues.Dapr.DefaultStateStore, it.Key, ConsistencyMode.Strong);
+            await ValidateAndSendError(evt, it, items);
 
-            if (items.Count < it.)
+            return (items, it);
         });
 
-        var inventory = await Task.WaitAll(toAwait);
+        var inventoryItemPair = await Task.WhenAll(toAwait);
+
+        // If no error happened, we can apply the event handler
+        foreach (var (iventory, itemRequest) in inventoryItemPair)
+        {
+            iventory.AvailableCount -= itemRequest.Count();
+        }
+
+        var toStore = inventoryItemPair.Select(iv => iv.Item1).Select(iv => new SaveStateItem<ItemInventory>(iv.Name, iv, null)).ToList();
+
+        await _client.SaveBulkStateAsync(DefaultValues.Dapr.DefaultStateStore, toStore);
     }
 
 
-    private async Task<bool> Validate(OrderRegisteredEvent evt)
+    // TODO compensate available items;
+
+    private async Task ValidateAndSendError(OrderRegisteredEvent evt, IGrouping<string, Item> it, ItemInventory? items)
     {
-        var duplicates = evt.Items.GroupBy(x => x.Name).Where(g => g.Count() > 1);
-        if (duplicates.Any())
+        if (items is null)
         {
             await _client.PublishEventAsync("pubsub", "invalidinventoryrequest", new Events.InvalidInventoryRequest
             {
                 OriginEventId = evt.Id,
-                ItemName = duplicates.First().Key,
-                Message = $"Item with name {duplicates.First().Key} is duplicated in the request",
-                InvalidType = InvalidInventoryRequestType.Duplicates
+                ItemName = it.Key,
+                Message = $"Item with name {it.Key} is not found in inventory",
+                InvalidType = InvalidInventoryRequestType.InventoryNotFound
             });
 
-            return false;
+            throw new InvalidRequestException();
         }
 
-        return true;
+        if (it.Count() > items.AvailableCount)
+        {
+            await _client.PublishEventAsync("pubsub", "invalidinventoryrequest", new Events.InvalidInventoryRequest
+            {
+                OriginEventId = evt.Id,
+                ItemName = it.Key,
+                Message = $"Item with name {it.Key} do not have sufficient available storage",
+                InvalidType = InvalidInventoryRequestType.InsufficientInventory
+            });
+
+            throw new InvalidRequestException();
+        }
     }
 }
