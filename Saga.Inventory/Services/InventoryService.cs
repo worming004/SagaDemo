@@ -35,31 +35,47 @@ public class InventoryService
     {
         var groupedItems = evt.Items.GroupBy(t => t.Name);
 
-        var toAwait = groupedItems.Select<IGrouping<string, Item>, Task<(ItemInventory, IEnumerable<Item>)>>(async it =>
-        {
-            // TODO use GetBulkStateAsync
-            var items = await _client.GetStateAsync<ItemInventory>(DefaultValues.Dapr.DefaultStateStore, it.Key, ConsistencyMode.Strong);
-            await ValidateAndSendError(evt, it, items);
+        var toAwait = groupedItems
+          .Select(async eventItems =>
+          {
+              // TODO use GetBulkStateAsync
+              var inventoryItem = await _client
+                      .GetStateAsync<ItemInventory>(DefaultValues.Dapr.DefaultStateStore, eventItems.Key, ConsistencyMode.Strong);
+              await ValidateAndSendError(evt, eventItems, inventoryItem);
 
-            return (items, it);
-        });
+              return (inventoryItem, eventItems);
+          });
 
         var inventoryItemPair = await Task.WhenAll(toAwait);
 
         // If no error happened, we can apply the event handler
-        foreach (var (iventory, itemRequest) in inventoryItemPair)
+        foreach (var (inventory, itemRequest) in inventoryItemPair)
         {
-            iventory.AvailableCount -= itemRequest.Count();
+            inventory.AvailableCount -= itemRequest.Count();
         }
 
-        var toStore = inventoryItemPair.Select(iv => iv.Item1).Select(iv => new SaveStateItem<ItemInventory>(iv.Name, iv, null)).ToList();
+        var toStore = inventoryItemPair
+          .Select(iv => iv.Item1)
+          .Select(iv => new SaveStateItem<ItemInventory>(iv.Name, iv, null))
+          .ToList();
 
         await _client.SaveBulkStateAsync(DefaultValues.Dapr.DefaultStateStore, toStore);
+        await _client.PublishEventAsync("pubsub", "inventoryistash", new InventoryStash
+        {
+            OriginEventId = evt.Id,
+            Items = inventoryItemPair.Select(pair =>
+            {
+                return new InventoryStashItem
+                {
+                    Name = pair.inventoryItem.Name,
+                    StashedCount = pair.eventItems.Count(),
+                    RemainsAvailable = pair.inventoryItem.AvailableCount
+                };
+            }).ToList()
+        });
     }
 
-
     // TODO compensate available items;
-
     private async Task ValidateAndSendError(OrderRegisteredEvent evt, IGrouping<string, Item> it, ItemInventory? items)
     {
         if (items is null)
